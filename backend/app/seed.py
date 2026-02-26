@@ -20,13 +20,22 @@ RGIE_2025_SEED = [
     }
 ]
 def seed_database(db: Session):
-    existing = db.query(models.Rule).count()
-    if existing > 0:
-        return  # évite double insertion
+    existing_codes = {
+        row[0] for row in db.query(models.Rule.code).all()
+    }
 
+    inserted = 0
     for rule_data in RGIE_2025_SEED:
-        rule = models.Rule(**rule_data)
-        db.add(rule)
+        if rule_data["code"] in existing_codes:
+            continue
 
-    db.commit()
-    print("RGIE 2025 seed loaded.")
+        payload = dict(rule_data)
+        payload["rule_metadata"] = payload.pop("metadata", None)
+
+        rule = models.Rule(**payload)
+        db.add(rule)
+        inserted += 1
+
+    if inserted > 0:
+        db.commit()
+        print(f"RGIE 2025 seed loaded ({inserted} rule(s) added).")

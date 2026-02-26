@@ -19,7 +19,7 @@ function Stop-PortProcess {
 Stop-PortProcess -Port 8000
 Stop-PortProcess -Port 3000
 
-Remove-Item (Join-Path $frontendDir '.next\dev\lock') -Force
+Remove-Item (Join-Path $frontendDir '.next') -Recurse -Force
 
 $backendCommand = "Set-Location '$backendDir'; & '$backendPython' -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000 --app-dir '$backendDir'"
 $frontendCommand = "Set-Location '$frontendDir'; npm run dev"
