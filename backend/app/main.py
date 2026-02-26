@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from sqlalchemy import text
+from fastapi.middleware.cors import CORSMiddleware
 
 if __package__ is None or __package__ == "":
     project_root = Path(__file__).resolve().parents[1]
@@ -31,6 +32,14 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="WebElec RGIE Engine", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 app.include_router(health.router)
